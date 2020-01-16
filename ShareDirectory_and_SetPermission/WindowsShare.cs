@@ -141,43 +141,23 @@ namespace ShareDirectory_and_SetPermission
 
         public static IList<WindowsShare> GetAllShares()
         {
-            IList<WindowsShare> result = new List<WindowsShare>();
-            ManagementClass mc = new ManagementClass("Win32_Share");
-            ManagementObjectCollection moc = mc.GetInstances();
-
-            foreach (ManagementObject mo in moc)
-            {
-                WindowsShare share = new WindowsShare(mo);
-                result.Add(share);
-            }
-
-            return result;
+            return new ManagementClass("Win32_Share")
+                .GetInstances()
+                .OfType<ManagementObject>()
+                .Select(mo => new WindowsShare(mo))
+                .ToList();
         }
 
         public static WindowsShare GetShareByName(string name)
         {
-            name = name.ToUpper();
-
-            IList<WindowsShare> shares = GetAllShares();
-
-            foreach (WindowsShare s in shares)
-                if (s.Name.ToUpper() == name)
-                    return s;
-
-            return null;
+            return GetAllShares()
+                .FirstOrDefault(s => s.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
         }
 
         public static WindowsShare GetShareByPath(string path)
         {
-            path = path.ToUpper();
-
-            IList<WindowsShare> shares = GetAllShares();
-
-            foreach (WindowsShare s in shares)
-                if (s.Path.ToUpper() == path)
-                    return s;
-
-            return null;
+            return GetAllShares()
+                .FirstOrDefault(s => s.Path.Equals(path, StringComparison.OrdinalIgnoreCase));
         }
 
         public MethodStatus SetPermission(string domain, string userName, AccessMaskTypes amtype)
