@@ -41,7 +41,7 @@ namespace ShareDirectory_and_SetPermission
             ReadOnly = 1179817
         }
 
-        private static ManagementObject _winShareObject;
+        private ManagementObject _winShareObject;
 
         private WindowsShare(ManagementObject obj)
         {
